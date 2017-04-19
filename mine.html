@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        #tb{
+            border: 1px solid #ddd;
+            width: 500px;
+            height: 200px;
+        }
+        #tb tbody td{
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        thead{
+            background: #2A2A2A;
+            color: #fff;
+            font-size: 18px;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>UI组件之排序表格</title>
+</head>
+<body>
+<div id="mes">首次单机科目标题会由小到大排列，再次单击标题将由大到小排列</div>
+<table id="tb" cellpadding="0", cellspacing="0">
+    <thead>
+    <tr>
+        <th>姓名</th>
+        <th>语文</th>
+        <th>数学</th>
+        <th>英语</th>
+        <th>总分</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>安德烈</td>
+        <td>145</td>
+        <td>124</td>
+        <td>120</td>
+        <td>389</td>
+    </tr>
+    <tr>
+        <td>德鲁伊</td>
+        <td>150</td>
+        <td>20</td>
+        <td>100</td>
+        <td>270</td>
+    </tr>
+    <tr>
+        <td>浪客剑心</td>
+        <td>100</td>
+        <td>60</td>
+        <td>130</td>
+        <td>290</td>
+    </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    var table=document.getElementById("tb");
+    var table_th=document.getElementsByTagName("th");
+    var table_tbody=table.getElementsByTagName("tbody")[0];
+    var table_tr=table_tbody.getElementsByTagName("tr");
+    var flag=true;
+    function bind_click(_i){
+        /*点击谁谁进行排序  只针对一列*/
+        table_th[_i].onclick=function(){
+            var temp_arr=[];
+            var temp_tr_arr=[];
+            /*在全部的行 tr进行循环*/
+            for(j=0;j<table_tr.length;j++){
+                /*巧妙的通过i 将题头与指定行中的对应列对应起来，把现在的数据都存放到数组中*/
+                temp_arr.push(table_tr[j].getElementsByTagName("td")[_i].innerHTML);
+                /*把一个列表项从一个列表复制到另一个*/
+                temp_tr_arr.push(table_tr[j].cloneNode(true));
+            };
+            /* console.log(temp_arr);
+             console.log(temp_tr_arr);*/
+            var tr_length=table_tr.length
+            /*清除原有的tr*/
+            for(x=0;x<tr_length;x++){
+                table_tbody.removeChild(table_tbody.getElementsByTagName("tr")[0]);
+            }
+            /*取得*/
+            var temp=parseInt(temp_arr[0])||temp_arr[0];
+            if(typeof(temp)=='number'){
+                /*sort 排序算法  由小到大*/
+                if(flag){
+                    temp_arr.sort(function(a,b){return a-b;});
+                }else{
+                    temp_arr.sort(function(a,b){return b-a;});
+                }
+
+            }else{
+                temp_arr.sort();
+            }
+            flag=!flag;
+            /*temp_arr已经是排好序的了,通过循环找到依次匹配原来的tr项，利用排序列的值相等找到tr节点对应的位置*/
+            for(k=0;k<temp_arr.length;k++){
+                for(vv=0;vv<temp_tr_arr.length;vv++){
+                    if(temp_arr[k]==temp_tr_arr[vv].getElementsByTagName("td")[_i].innerHTML){
+                        table_tbody.appendChild(temp_tr_arr[vv]);
+                    }
+                }
+            }
+        }
+    }
+    for(i=0;i<table_th.length;i++){
+        bind_click(i);
+    }
+</script>
+</body>
+</html>
